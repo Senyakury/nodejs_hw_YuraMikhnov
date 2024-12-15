@@ -6,7 +6,7 @@ if (!process.env.COLORS_EN) {
 const logger = (moduleName) => {
     const log = (message) => {
         if (process.env.COLORS_EN === "1") {
-            console.log(`[${colors.gray(moduleName)}]: ${colors.blue(message)}`);
+            console.log(`[${colors.gray(moduleName)}]: ${message}`);
         } else {
             console.log(`[${moduleName}]: ${message}`);
         }
@@ -14,9 +14,9 @@ const logger = (moduleName) => {
 
     const warn = (message) => {
         if (process.env.COLORS_EN === "1") {
-            console.log(`[${colors.gray(moduleName)}]: ${colors.red(message)}`);
+            console.log(`[${colors.red(moduleName)}]: Error - ${message}!`);
         } else {
-            console.log(`[${moduleName}]: error - ${message}`);
+            console.log(`[${moduleName}]: Error - ${message}!`);
         }
     };
 
