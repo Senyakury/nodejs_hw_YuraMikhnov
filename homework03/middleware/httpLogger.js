@@ -1,4 +1,3 @@
-// import logger from "../app/utils/logger.js"
 import logger from "../app/utils/logger.js";
 const { log, warn } = logger("main");
 

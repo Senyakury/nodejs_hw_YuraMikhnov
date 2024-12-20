@@ -1,15 +1,9 @@
 import express from "express"
-import httpLogger from "../middleware/middleware.js";
-import { createWriteStream } from 'fs';
+import httpLogger from "../middleware/httpLogger.js";
 import logger from "./utils/logger.js";
 const app = express()
 
-const path = "./logs/server.log"
-const writeStream = createWriteStream( path )
 const { log, warn } = logger("main");
-writeStream.write(log("some info", "stream"));
-writeStream.write(warn("some error", "stream"));
-
 
 app.use(httpLogger)
 

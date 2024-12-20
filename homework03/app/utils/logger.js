@@ -1,6 +1,10 @@
 import fs from 'fs';
 import "dotenv/config"
 import colors from "colors/safe.js"
+import { createWriteStream } from 'fs';
+
+const path = "././logs/server.log"
+const writeStream = createWriteStream( path )
 if (!process.env.COLORS_EN) {
     process.env.COLORS_EN = 0
 }
@@ -29,4 +33,7 @@ const logger = (moduleName) => {
 
     return { log, warn };
 }
+const { log , warn } = logger('main')
+writeStream.write(log("some info", "stream"));
+writeStream.write(warn("some error", "stream"));
 export default logger
