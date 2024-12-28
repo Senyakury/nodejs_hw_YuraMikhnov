@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express from "express";
 import userRouter from "../routes/userRoutes.js";
+import postRouter from "../routes/postRoutes.js";
 import { databaseService } from "../src/DatabaseService.js";
 import logger from "./utils/logger.js";
 const app = express();
@@ -13,7 +14,9 @@ app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
 
-app.use("/homework04/v1", userRouter);
+app.use("/api/v1", userRouter);
+
+app.use("/api/v1", postRouter);
 
 app.use((err, req, res, next) => {
   warn("Error:", err.message);
