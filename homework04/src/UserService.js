@@ -57,6 +57,9 @@ class UserService {
         });
         const result = await this.db.collection("users").deleteOne({ _id: new ObjectId(id) });
         return result.deletedCount > 0;
+      }else{
+        const result = await this.db.collection("users").deleteOne({ _id: new ObjectId(id) });
+        return result.deletedCount > 0;
       }
     }
     else{
