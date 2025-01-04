@@ -15,7 +15,7 @@ class DatabaseService {
     async connect(){
       try{
           await this.client.connect()
-          await log("Connected to DB")
+          log("Connected to DB")
           return this.client.db(DB_NAME);
       }catch(error){
           throw error

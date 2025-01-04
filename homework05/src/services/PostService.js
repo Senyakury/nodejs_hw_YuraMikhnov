@@ -48,14 +48,14 @@ class PostService  {
   };
     }
      async updatePost(id, title, content, status  ) {
-        const post = await this.getPostById(id)
-        const authorId = await post.authorId
+        const post = this.getPostById(id)
+        const authorId = post.authorId
         const result = await this.db.collection("posts").findOneAndUpdate(
           { _id: new ObjectId(id) },
           { $set: {title:title, content:content, status:status,authorId:authorId, updatedAt: new Date().toISOString() }},
           { returnDocument: "after" }
         );
-        let updatedPost = await this.getPostById(id)
+        const updatedPost = await this.getPostById(id)
         const postAuthor = await updatedPost.authorId
         const user = await userService.getUserById(postAuthor)
     

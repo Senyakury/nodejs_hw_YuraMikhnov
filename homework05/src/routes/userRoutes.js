@@ -7,8 +7,8 @@ const userRouter = Router();
 userRouter.post("/users",
   body("name").trim().isLength({min:2}),
   body("email").trim().isEmail(),
-  body("age").trim().isNumeric(),
-  body("age").trim().isLength({max:2}),
+  body("age").trim().isNumeric().isLength({max:2}),
+  // body("age").trim(),
   async (req, res) => {
   const result = validationResult(req)
   if (!result.isEmpty()) {
@@ -52,8 +52,8 @@ userRouter.get("/users/:id", async (req, res) => {
 userRouter.put("/users/:id",
   body("name").trim().isLength({min:2}),
   body("email").trim().isEmail(),
-  body("age").trim().isNumeric(),
-  body("age").trim().isLength({max:2}),
+  body("age").trim().isNumeric().isLength({max:2}),
+  // body("age").trim().
   async (req, res) =>{
   const result = validationResult(req)
   if (!result.isEmpty()) {
