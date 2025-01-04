@@ -1,0 +1,20 @@
+{
+  "dependencies": {
+    "colors": "^1.4.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "mongodb": "^6.12.0"
+  },
+  "name": "homework05",
+  "version": "20.0.0",
+  "main": "app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app/app.js",
+    "start:dev": "NODE_ENV=dev tsx watch --inspect=0.0.0.0:9229 src/app/app.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
