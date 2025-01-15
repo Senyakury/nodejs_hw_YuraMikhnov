@@ -2,8 +2,8 @@ import "dotenv/config";
 import express from "express";
 import userRouter from "../routes/userRoutes.js";
 import postRouter from "../routes/postRoutes.js";
-import { databaseService } from "../services/DatabaseService.js";
-import logger from "./utils/logger.js";
+import { databaseService } from "../services/DatabaseService";
+import logger from "./utils/logger";
 const app = express();
 const PORT = process.env.PORT
 const HOSTNAME = process.env.HOST
@@ -20,7 +20,7 @@ app.use("/api/v1", userRouter);
 app.use("/api/v1", postRouter);
 
 app.use((err, req, res, next) => {
-  warn("Error:", err.message);
+  warn(`Error : ${err.message}`);
   res.status(500).json({ error: err.message });
   next()
 });

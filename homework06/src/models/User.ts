@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, ManyToOne } from "typeorm"
-import { Post } from "./Post.js";
+import { Post } from "./Post";
 
 
 @Entity("users")
@@ -17,6 +17,6 @@ export class User {
     @Column("integer")
     age:number
 
-    @Column("text" , {array:true})
-    posts: Post[];
+    @OneToMany(() => Post, (post) => post.author , { onDelete: "CASCADE" }) 
+    posts: Post[]
 }

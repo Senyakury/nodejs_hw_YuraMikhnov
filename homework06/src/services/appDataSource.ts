@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm"
-import { User } from "../models/User.ts"
-import { Post } from "../models/Post.ts"
+import { User } from "../models/User"
+import { Post } from "../models/Post"
 import "dotenv/config"
 export const appDataSource = new DataSource({
     type:"postgres",

@@ -17,13 +17,16 @@ export class Post {
   @Column("text")
   status: string;
  
-  @Column("integer")
-  authorId: number;
+  @ManyToOne(() => User, (user) => user.posts,{ onDelete: "CASCADE" })
+  author: User
+
+  @Column("integer",{ nullable: true })
+  authorId: number
   
   @Column("date")
-  createdAt: Date;
+  createdAt: string;
 
   @Column("date")
-  updatedAt: Date;
+  updatedAt: string;
 
 }

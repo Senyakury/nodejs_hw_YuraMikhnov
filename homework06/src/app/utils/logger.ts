@@ -2,7 +2,7 @@ import "dotenv/config"
 import colors from "colors/safe.js"
 
 if (!process.env.COLORS_EN) {
-    process.env.COLORS_EN = 0
+    process.env.COLORS_EN = "0"
 }
 const logger = (moduleName) => {
     const log = (message) => {

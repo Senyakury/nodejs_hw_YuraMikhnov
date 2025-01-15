@@ -1,5 +1,5 @@
-import logger from "../app/utils/logger.js";
-import { appDataSource } from "./appDataSource.js";
+import logger from "../app/utils/logger";
+import { appDataSource } from "./appDataSource";
 
 const {log , warn} = logger("main")
 class DatabaseService {

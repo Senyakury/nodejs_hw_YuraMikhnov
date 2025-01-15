@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { postService } from "../services/PostService.js";
+import { postService } from "../services/PostService";
 import { body, validationResult } from "express-validator"
 
 const postRouter = Router();
