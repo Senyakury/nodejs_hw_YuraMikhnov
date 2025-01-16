@@ -26,7 +26,7 @@ class PostService  {
       throw new Error("User Not Found");
     }
     if (user.posts.length == 0) {
-      return "This User doesn't have any posts"
+      throw new Error("This User doesn't have any posts");
     }
     return user.posts
   }
