@@ -60,7 +60,7 @@ postRouter.get("/users/:id/posts", async (req, res) => {
   
   postRouter.put("/posts/:id", 
     body("title").trim().isLength({min:2}),
-    body("cotent").trim().isLength({min:5}),
+    body("content").trim().isLength({min:5}),
     async (req, res) => {
       const result = validationResult(req)
       if (!result.isEmpty()) {

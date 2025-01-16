@@ -9,7 +9,7 @@ class DatabaseService {
       log("Connected to PostgreSQL");
       return appDataSource;
     } catch (error) {
-      warn("Failed to connect to PostgreSQL", error);
+      warn(`Failed to connect to PostgreSQL : ${error}`);
       throw error;
     }
   }
@@ -19,7 +19,7 @@ class DatabaseService {
       await appDataSource.destroy();
       log("Disconnected from PostgreSQL");
     } catch (error) {
-      warn("Failed to disconnect from PostgreSQL", error);
+      warn(`Failed to disconnect to PostgreSQL : ${error}`);
     }
   }
 }

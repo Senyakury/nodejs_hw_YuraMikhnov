@@ -17,6 +17,6 @@ export class User {
     @Column("integer")
     age:number
 
-    @OneToMany(() => Post, (post) => post.author , { onDelete: "CASCADE" }) 
+    @OneToMany(() => Post, (post) => post.author , { onDelete: "CASCADE" , eager: true}) 
     posts: Post[]
 }
