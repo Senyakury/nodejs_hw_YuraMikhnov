@@ -1,0 +1,126 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="color-scheme", content="light dark")
+    title= "Register"
+    style.
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction:column;
+        background-color:#bd64cc;
+        color: black;
+      }
+      h1 {
+        margin:auto;
+        color:white;
+      }
+      hr{
+        width:100%;
+        margin:auto;
+        border:1px solid black
+      }
+      .container {
+        height: 350px;
+        width: 300px;
+        background:#9519ad;
+        padding: 30px;
+        box-shadow: 0px 0px 30px black inset;
+        border-radius: 10px;
+      }
+      form {
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 25px;
+      }
+      div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap:5px;
+      }
+      input {
+        width: 90%;
+        padding: 5px;
+        border-radius: 5px;
+        border: none;
+        background-color:#d796e0;
+      }
+      input:focus{
+        box-sizing:none;
+      }
+      button {
+        width: 170px;
+        margin: auto;
+        height: 40px;
+        background-color:#b04bc2;
+        color:rgb(195, 153, 202);
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: 0.4s
+      }
+      button:hover{
+        box-shadow: 0px 0px 7px black inset;
+        box-shadow: 0px 0px 7px black;
+      }
+            header {
+        height:70px;
+        width:100%;
+        position:absolute;
+        bottom:89.5%;
+        background-color:#8800a3;
+        display:flex;
+        justify-content:flex-end;
+        align-items:center;
+        column-gap:20px;
+        color:#d796e0;
+        cursor:pointer;
+      }
+      header span{
+        transition:0.4s;
+      }
+      header a{
+        background-color:#b04bc2;
+        width:140px;
+        height:50px;
+        margin-right:20px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        transition:0.4s;
+      }
+      header span:hover{
+        font-size:18px;
+      }
+      header a:hover{
+        box-shadow:0px 0px 10px black;
+        font-size:18px;
+      }
+
+  body(style="min-height: 100vh;")
+    header
+      span About Us
+      a(href="/register") Register
+    main.container
+      form(action="/login", method="POST")
+        h1 Login
+        hr
+        div
+          label Name
+          input(type="text", name="name", class="name" , required)
+        div
+          label Password
+          input(type="password", name="password" , class="password" ,required)
+        div
+          label Email 
+          input(type="email", name="email", class="email" ,required)
+        button(type="submit") Submit
+        

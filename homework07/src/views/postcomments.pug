@@ -1,0 +1,231 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="color-scheme", content="light dark")
+    title= "Register"
+    style.
+      a{
+        text-decoration:none;
+      }
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        flex-direction:column;
+        background-color:#66B8D9;
+        color: black;
+        overflow-y: scroll; 
+        overflow-x: hidden; 
+      }
+      h1 {
+        margin:auto;
+        color:white;
+      }
+      hr{
+        width:100%;
+        margin:auto;
+        border:1px solid black
+      }
+      div {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap:5px;
+      }
+      header {
+        height:70px;
+        padding-left:20px;
+        padding-right:20px;
+        width:96.7%;
+        display:flex;
+        justify-content:flex-end;
+        align-items:center;
+        column-gap:20px;
+        color:#d796e0;
+        background-color: rgb(49, 18, 95)
+      }
+      header span{
+        transition:0.4s;
+        cursor:pointer;
+      }
+      header a{
+        background-color:#66B8D9;
+        width:140px;
+        height:50px;
+        margin-right:20px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        transition:0.4s;
+      }
+      header span:hover{
+        font-size:18px;
+      }
+      header a:hover{
+        box-shadow:0px 0px 10px black;
+        font-size:18px;
+      }
+      .posts{
+        padding:20px;
+        width:450px;
+        height:200px;
+        background-color:#D0D7D9;
+        display:flex;
+        align-items:flex-start;
+        flex-wrap:wrap;
+        flex-direction:column;
+        border-radius:10px;
+        border:1px solid black;
+        gap:15px;
+      }
+      .comments{
+        padding:20px;
+        margin:auto;
+        width:80%;
+        min-height:60px;
+        background-color:#D0D7D9;
+        display:flex;
+        align-items:flex-start;
+        flex-wrap:wrap;
+        flex-direction:column;
+        border-radius:10px;
+        border:1px solid black;
+        gap:15px;
+      }
+      .comments>div{
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+        justify-content:space-evenly;
+      }
+      .comments>div>a{
+        background-color:#66B8D9;
+        width:20%;
+        height:30px;
+        padding:5px;
+        display:flex;
+        flex-wrap:wrap;
+        align-items:center;
+        justify-content:center;
+        border-radius:10px;
+        transition:0.4s;
+      }
+      .comments>div>a:hover{
+        box-shadow:0px 0px 10px black;
+      }
+      main{
+        display:flex;
+        align-items:center;
+        flex-wrap:wrap;
+        flex-direction:column;
+        gap:20px;
+      }
+      main>div{
+        width:90%;
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+        justify-content:space-between;
+      }
+      .posts>h2{
+        margin-right : auto;
+      }
+      .operator{
+        border-top:1px solid black;
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+        justify-content:space-between;
+        padding:5px;
+      }
+      input {
+        width: 70%;
+        padding: 5px;
+        border-radius: 5px;
+        border: none;
+        background-color:#d796e0;
+      }
+      input:focus{
+        box-sizing:none;
+      }
+      .operator>a{
+        width:40%;
+        background-color:#66B8D9;
+        height:40px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        cursor:pointer;
+        transition:0.4s
+      }
+      .operator>a:hover{
+        box-shadow:0px 0px 10px black;
+      }
+      main>div>div{
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+      }
+      .title{
+        font-size:30px
+      }
+      .content{
+        margin-left:20px;
+        font-size:23px
+      }
+      .creator{
+        margin-left:80%;
+      }
+      main>h2{
+        text-align:center
+      }
+      form>div{
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+      }
+      button{
+        width:15%;
+        height:40px;
+      }
+      form{
+        width:100%;
+      }
+
+  body(style="min-height: 100vh;")
+    header
+      span About Us
+      a(href="/main") Back To Main
+      a(href="/login") Log Out
+    main
+      h2 Post:
+      div 
+        div.posts
+          span.title #{post.title}
+          span.content #{post.content}
+          span.creator by #{postcreator.name} 
+          form(action=`/main/post/${post.id}/comments`, method="POST") 
+            label Write a comment 
+            div
+              input(type="text",name="content",class="content")
+              button(type="submit") Submit
+      hr
+      h2 All Comments:
+      div
+        each comment in comments
+          if comment.authorId == me.id
+            div.comments
+              span.content #{comment.content}
+              span.creator by You
+              div
+                a(href=`/main/post/${post.id}/comments/${comment.id}/change`) Change comment
+                a(href=`/main/post/${post.id}/comments/${comment.id}/delete`) Delete comment
+          else
+            div.comments
+              span.content #{comment.content}
+              span.creator by #{comment.authorName} 
+        

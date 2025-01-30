@@ -1,0 +1,119 @@
+doctype html
+html(lang="en")
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1")
+    meta(name="color-scheme", content="light dark")
+    title= "Register"
+    style.
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        flex-direction:column;
+        background-color:#66B8D9;
+        color: black;
+        overflow-y: scroll; 
+        overflow-x: hidden; 
+      }
+      hr{
+        width:100%;
+        border:1px solid black;
+        margin:5px;
+      }
+      h1 {
+        margin:auto;
+        color:white;
+      }
+      div {
+        background-color:#D0D7D9;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        
+        gap:5px;
+      }
+      header {
+        height:70px;
+        padding-left:20px;
+        padding-right:20px;
+        width:96.7%;
+        display:flex;
+        justify-content:flex-end;
+        align-items:center;
+        column-gap:20px;
+        color:#d796e0;
+        background-color: rgb(49, 18, 95)
+      }
+      header span{
+        transition:0.4s;
+        cursor:pointer;
+      }
+      a{
+        background-color:#66B8D9;
+        width:120px;
+        height:50px;
+        margin-right:20px;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        border-radius:10px;
+        transition:0.4s;
+      }
+      header span:hover{
+        font-size:18px;
+      }
+      a:hover{
+        box-shadow:0px 0px 10px black;
+        font-size:18px;
+      }
+      main{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        flex-wrap:wrap;
+        flex-direction:column;
+        gap:20px;
+        height:400px;
+      }
+      main>div{
+        margin-top:40px;
+        padding:20px;
+        height:100%;
+        width:300px;
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:column;
+        justify-content:space-between;
+        align-items:flex-start;
+        border-radius:10px;
+        border:1px solid black;
+      }
+      main>div>div{
+        display:flex;
+        flex-wrap:wrap;
+        flex-direction:row;
+      }
+      p{
+        width:100%;
+        text-align:center;
+      }
+
+  body(style="min-height: 100vh;")
+    header
+      span About Us
+      a(href="/login") Log Out
+      a(href="/main") Back to main
+    main
+      div 
+        div
+          p Your profile
+          hr
+        span Name: #{user.name}
+        span Age: #{user.age}
+        span Email: #{user.email}
+        div
+          a(href=`/main/profile/updateuser/${user.id}`) Update account
+          a(href=`/main/profile/deleteuser/${user.id}`) Delete account
