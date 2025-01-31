@@ -24,7 +24,7 @@ export class Post {
   @OneToMany(() => Comment, (comment) => comment.post , { onDelete: "CASCADE" , eager: true}) 
   comments: Comment[]
 
-  @Column("integer",{ nullable: true })
+  @Column("integer")
   authorId: number
   
   @Column("date")

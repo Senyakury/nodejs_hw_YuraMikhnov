@@ -39,14 +39,10 @@ PostsAdminRouter.get('/main/postchange/:id', async (req:Request, res:Response) =
 PostsAdminRouter.post("/main/postchange/:id", async (req: Request, res: Response) => {
     const id = req.params.id;
     const { title, content } = req.body;
-    
-    // Перевірка на наявність поста
     const post = await postService.getPostBy({ id:id });
     if (!post) {
         return res.status(400).send("Post not found");
     }
-
-    // Оновлення поста
     await postService.updatePost(id, title, content);
     res.redirect('/main');
 });

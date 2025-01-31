@@ -16,7 +16,7 @@ export class Comment {
   author: User
 
   @ManyToOne(() => Post, (post) => post.comments,{ onDelete: "CASCADE" })
-  post: User
+  post: Post
 
   @Column("integer")
   postId:number

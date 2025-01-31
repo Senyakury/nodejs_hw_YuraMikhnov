@@ -4,11 +4,10 @@ import "dotenv/config";
 import express from "express";
 import userRouter from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser"
-// import postRouter from "./routes/postRoutes.js";
+import postRouter from "./routes/postRoutes.js";
 import { databaseService } from "./services/DatabaseService.js";
 import logger from "./app/utils/logger.js";
 import { UserAdminRouter } from "./routes/UserAdminRouter";
-import path from 'path';
 import methodOverride from 'method-override';
 
 
@@ -30,12 +29,12 @@ app.use(CommentsAdminRoutes)
 app.get("/", (req, res) => {
   res.send("Hello, World!");
 });
-// app.get("/register", (req,res)=>{})
 app.get("/register", (req, res) => {
   res.render('register');
 });
 
 app.use("/api/v1", userRouter);
+app.use("/api/v1", postRouter);
 
 
 app.use((err, req, res, next) => {

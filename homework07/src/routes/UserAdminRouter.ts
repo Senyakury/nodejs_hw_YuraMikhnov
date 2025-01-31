@@ -13,11 +13,11 @@ UserAdminRouter.get("/register",async (req:Request , res:Response)=>{
 })
 
 UserAdminRouter.post("/register",async (req:Request , res:Response)=>{
-  try{
     res.clearCookie('accessToken');
     const {name , email , password, age} = req.body
+    console.log(name,email,password,age)
     if (!email.includes("@gmail.com")) {
-      res.status(400).sent("Its an email")
+      res.status(400).send("Its not an email")
       return
     }
     const userByName = await userService.getUserBy({name})
@@ -27,28 +27,16 @@ UserAdminRouter.post("/register",async (req:Request , res:Response)=>{
         return
     }
     const passwordHash = await bcrypt.hash(password, 10);
-    req["name"] = name
-    
-    const newUser = await userService.createUser(name,email,passwordHash,age)
-    const oldtoken = req.cookies['accessToken']
-    if (oldtoken) {
-      res.clearCookie('accessToken');
-    }
-    const token = jwt.sign({ username: newUser.name }, JWT_SECRET_KEY, {
+    await userService.createUser(name,email,passwordHash,age)
+    const token = jwt.sign({ email }, JWT_SECRET_KEY, {
         expiresIn: '1h',
     });
     res.cookie('accessToken', token, {
         httpOnly: true,
         sameSite: 'strict',
     });
-    res.redirect("/main")}
-    catch(error){
-      console.error("Error during registration:", error);
-        if (!res.headersSent) {
-            res.status(500).send("Internal Server Error");
-        }
-    }
-})
+    res.redirect("/main")
+  })
 
 
 UserAdminRouter.get("/login",(req:Request,res:Response)=>{
@@ -57,7 +45,7 @@ UserAdminRouter.get("/login",(req:Request,res:Response)=>{
 
 UserAdminRouter.post("/login", async (req:Request,res:Response)=>{
     const {name , email , password } = req.body
-    const user = await userService.getUserBy({name , email})
+    const user = await userService.getUserBy({name,email})
     
     if (!user) {
         res.status(400).send("User not found")
@@ -70,7 +58,7 @@ UserAdminRouter.post("/login", async (req:Request,res:Response)=>{
         return
     }
     
-    const token = jwt.sign({ username: user.name  }, JWT_SECRET_KEY, {
+    const token = jwt.sign({ email: user.email  }, JWT_SECRET_KEY, {
         expiresIn: '1h',
       });
       res.cookie('accessToken', token, {
@@ -81,10 +69,7 @@ UserAdminRouter.post("/login", async (req:Request,res:Response)=>{
 }) 
 UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response) => {
   try{
-    const token = req.cookies['accessToken'];
-    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY ) as { username: string };
-    const name = decoded.username
-    const user = await userService.getUserBy({name});
+    const user = req.user
     if (!user) {
       res.status(404).send('User not found');
       return;
@@ -100,7 +85,7 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
         };
     });
     res.render("main", {
-        user: name,
+        user: user.name,
         email: user.email,
         age: user.age,
         UserPosts: user.posts,
@@ -112,30 +97,14 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
 
 });
 
-//   UserAdminRouter.post('/main', authenticateToken, async (req:Request, res:Response) => {
-//     const { name, email , age } = req.body;
-//     const user = await userService.getUserBy({name});
-//     if (!user) {
-//       res.status(404).send('User not found');
-//       return;
-//     }
-//     await userService.updateUser(user.id, name, email, age);
-//     res.status(200).send('User updated');
-//   });
-  UserAdminRouter.get("/main/profile",  async (req:Request, res:Response)=>{
-    const token = req.cookies['accessToken']
-    const decoded = jwt.verify(token , JWT_SECRET_KEY) as {username:string}
-    const name = decoded.username
-    const user = await userService.getUserBy({name})
+  UserAdminRouter.get("/main/profile", authenticateToken , async (req:Request, res:Response)=>{
+    const user = req.user.name
     res.render("profile",{
         user:user
     })
   })
-  UserAdminRouter.get("/main/profile/updateuser/:id",  async (req:Request, res:Response)=>{
-    const token = req.cookies['accessToken']
-    const decoded = jwt.verify(token , JWT_SECRET_KEY) as {username:string}
-    const name = decoded.username
-    const user = await userService.getUserBy({name})
+  UserAdminRouter.get("/main/profile/updateuser/:id", authenticateToken ,  async (req:Request, res:Response)=>{
+    const user = req.user
     res.render("updateuser",{
         id:user.id
     })
@@ -179,7 +148,7 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
       await userService.updateUser(updatedUser.id, updatedUser.name, updatedUser.email, updatedUser.password, updatedUser.age);
 
       res.clearCookie("accessToken");
-      const newToken = jwt.sign({ username: updatedUser.name }, JWT_SECRET_KEY, { expiresIn: "1h" });
+      const newToken = jwt.sign({ username: updatedUser.email }, JWT_SECRET_KEY, { expiresIn: "1h" });
       res.cookie("accessToken", newToken, { httpOnly: true, sameSite: "strict" });
 
       res.redirect("/main");
