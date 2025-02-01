@@ -8,6 +8,7 @@ if (!JWT_SECRET_KEY) {
     throw new Error("JWT_SECRET_KEY is not defined. Set it in the .env file.");
   }
 
+
 export const authenticateToken = async (req, res, next) => {
     const token = req.cookies['accessToken'];
     if (!token) {
@@ -15,11 +16,17 @@ export const authenticateToken = async (req, res, next) => {
       return;
     }
   
-    const decoded = jwt.verify(token, JWT_SECRET_KEY) as {email:string};
-    logger("main").log(decoded.email)
-    const email = decoded.email
+    const decoded = async (token: string, secret: string): Promise<any> =>{
+      return new Promise((resolve, reject) => {
+        jwt.verify(token, secret, (err, decoded) => {
+          if (err) return reject(err);
+          resolve(decoded);
+        }) as {email:string};
+      });
+    }
+    const decodedData = await decoded(token, JWT_SECRET_KEY);
+    const email = decodedData.email
     const user = await userService.getUserBy({email})
     req.user = user;
     next();
-    return user
   }

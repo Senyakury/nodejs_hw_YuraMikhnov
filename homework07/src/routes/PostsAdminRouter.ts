@@ -1,21 +1,25 @@
 import { Router , Request , Response } from 'express';
-import jwt from 'jsonwebtoken';
 import { postService } from '../services/PostService';
-import { userService } from '../services/UserService';
+import { body, validationResult } from 'express-validator';
+import { authenticateToken } from '../middleware/authentificator';
+
 
 export const PostsAdminRouter = Router()
 PostsAdminRouter.get("/main/postcreate", async (req:Request , res:Response)=>{
     res.render("postcreate")
 })
-PostsAdminRouter.post("/main/postcreate", async (req:Request , res:Response)=>{
+PostsAdminRouter.post("/main/postcreate",authenticateToken,
+    body("title").isLength({min:2 , max:20}),
+    body("content").isLength({min:5 , max:100}),
+     async (req:Request , res:Response)=>{
     try {
-        const token = req.cookies['accessToken'];
-        if (!token) {
-            return res.status(401).send('No token found');
+        const result = validationResult(req)
+        if (!result.isEmpty()) {
+              res.status(422).send({ errors: result.array() });
+              return;
         }
-        const verified = jwt.verify(token, process.env.JWT_SECRET_KEY ) as { username: string };
-        const name = verified.username
-        const author = await userService.getUserBy({ name });
+
+        const author = req.user
         if (!author) {
             return res.status(404).send('Author not found');
         }
@@ -36,7 +40,16 @@ PostsAdminRouter.get('/main/postchange/:id', async (req:Request, res:Response) =
     const postId = req.params.id;
     res.render("postchange", { id: postId });
 });
-PostsAdminRouter.post("/main/postchange/:id", async (req: Request, res: Response) => {
+PostsAdminRouter.post("/main/postchange/:id",
+    body("title").isLength({min:2 , max:20}),
+    body("content").isLength({min:5 , max:100})
+    , async (req: Request, res: Response) => {
+        const result = validationResult(req)
+        if (!result.isEmpty()) {
+              res.status(422).send({ errors: result.array() });
+              return;
+        }
+
     const id = req.params.id;
     const { title, content } = req.body;
     const post = await postService.getPostBy({ id:id });

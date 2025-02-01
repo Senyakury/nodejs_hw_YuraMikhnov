@@ -1,20 +1,16 @@
-import jwt from 'jsonwebtoken';
 import { Router , Request , Response } from 'express';
 import { authenticateToken , JWT_SECRET_KEY } from "../middleware/authentificator";
 import { userService } from '../services/UserService';
 import { postService } from '../services/PostService';
 import { commentService } from '../services/CommentService';
-
+import { body, validationResult } from 'express-validator';
 export const CommentsAdminRoutes = Router()
 
-CommentsAdminRoutes.get("/main/post/:postId/comments", async (req:Request , res:Response)=>{
-    const token = req.cookies["accessToken"]
-    const decoded = jwt.verify(token , JWT_SECRET_KEY) as {username:string}
-    const name = decoded.username
+CommentsAdminRoutes.get("/main/post/:postId/comments",authenticateToken, async (req:Request , res:Response)=>{
+    const user = req.user
     const id = req.params.postId
-    const Me = await userService.getUserBy({name})
     const post = await postService.getPostBy({id})
-    const user = await userService.getUserBy({id : post.authorId})
+    const authorOfPost = await userService.getUserBy({id : post.authorId})
     const myComments = post.comments.filter(comment => comment.authorId == user.id)
     const authors = await userService.getAllUsers()
     const commentsWithAuthors = post.comments.map(comment => {
@@ -28,18 +24,24 @@ CommentsAdminRoutes.get("/main/post/:postId/comments", async (req:Request , res:
         post:{...post},
         myComments:myComments,
         comments:commentsWithAuthors,
-        postcreator : user,
-        me:Me
+        postcreator : authorOfPost,
+        me:user
     })
 })
-CommentsAdminRoutes.post("/main/post/:postId/comments" , async (req:Request , res:Response)=>{
+CommentsAdminRoutes.post("/main/post/:postId/comments",authenticateToken
+    ,body("content").isLength({min:2})
+    ,async (req:Request , res:Response)=>{
+
+    const result = validationResult(req)
+    if (!result.isEmpty()) {
+          res.status(422).send({ errors: result.array() });
+          return;
+    }
+
     const {content} = req.body
     const postId = req.params.postId
-    const token = req.cookies["accessToken"]
-    const decoded = jwt.verify(token , JWT_SECRET_KEY) as {username:string}
-    const name = decoded.username
-    const user = await userService.getUserBy({name})
-    const authorId = user.id
+    const author = req.user
+    const authorId = author.id
     await commentService.createComment(content,authorId,postId)
     res.redirect(`/main/post/${postId}/comments`)
 })

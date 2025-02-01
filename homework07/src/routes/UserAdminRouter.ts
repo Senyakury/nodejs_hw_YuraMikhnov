@@ -4,6 +4,7 @@ import { authenticateToken , JWT_SECRET_KEY } from "../middleware/authentificato
 import { userService } from '../services/UserService';
 import bcrypt from "bcryptjs"
 import { postService } from '../services/PostService';
+import { body , validationResult } from 'express-validator';
 
 
 
@@ -12,10 +13,20 @@ UserAdminRouter.get("/register",async (req:Request , res:Response)=>{
     res.render("register")
 })
 
-UserAdminRouter.post("/register",async (req:Request , res:Response)=>{
+UserAdminRouter.post("/register",
+    body("email").isEmail(),
+    body("name").isLength({min:2}),
+    body("age").isLength({max:2})
+  ,async (req:Request , res:Response)=>{
+    const result = validationResult(req)
+    if (!result.isEmpty()) {
+      res.status(422).send({ errors: result.array() });
+      return;
+    }
+
     res.clearCookie('accessToken');
     const {name , email , password, age} = req.body
-    console.log(name,email,password,age)
+
     if (!email.includes("@gmail.com")) {
       res.status(400).send("Its not an email")
       return
@@ -98,7 +109,7 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
 });
 
   UserAdminRouter.get("/main/profile", authenticateToken , async (req:Request, res:Response)=>{
-    const user = req.user.name
+    const user = req.user
     res.render("profile",{
         user:user
     })
@@ -109,8 +120,18 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
         id:user.id
     })
   })
-  UserAdminRouter.post("/main/profile/updateuser/:id",  async (req:Request, res:Response)=>{
+  UserAdminRouter.post("/main/profile/updateuser/:id",
+    body("email").isEmail(),
+    body("name").isLength({min:2}),
+    body("age").isLength({max:2})
+    ,  async (req:Request, res:Response)=>{
     try {
+      const result = validationResult(req)
+      if (!result.isEmpty()) {
+        res.status(422).send({ errors: result.array() });
+        return;
+      }
+
       const { name, email, password, age } = req.body;
       const id = req.params.id;
       const user = await userService.getUserBy({ id });
@@ -148,7 +169,7 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
       await userService.updateUser(updatedUser.id, updatedUser.name, updatedUser.email, updatedUser.password, updatedUser.age);
 
       res.clearCookie("accessToken");
-      const newToken = jwt.sign({ username: updatedUser.email }, JWT_SECRET_KEY, { expiresIn: "1h" });
+      const newToken = jwt.sign({ email: updatedUser.email }, JWT_SECRET_KEY, { expiresIn: "1h" });
       res.cookie("accessToken", newToken, { httpOnly: true, sameSite: "strict" });
 
       res.redirect("/main");
@@ -160,20 +181,14 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
   }
     
   })
-  UserAdminRouter.get("/main/profile/deleteuser/:id",  async (req:Request, res:Response)=>{
-    const token = req.cookies['accessToken']
-    const decoded = jwt.verify(token , JWT_SECRET_KEY) as {username:string}
-    const name = decoded.username
-    const user = await userService.getUserBy({name})
+  UserAdminRouter.get("/main/profile/deleteuser/:id",authenticateToken,  async (req:Request, res:Response)=>{
+    const user = req.user
     res.render("deleteuser",{
         id:user.id
     })
   })
-  UserAdminRouter.post("/main/profile/deleteuser/:id",  async (req:Request, res:Response)=>{
-    const token = req.cookies['accessToken']
-    const decoded = jwt.verify(token , JWT_SECRET_KEY) as {username:string}
-    const name = decoded.username
-    const user = await userService.getUserBy({name})
+  UserAdminRouter.post("/main/profile/deleteuser/:id",authenticateToken,  async (req:Request, res:Response)=>{
+    const user = req.user
     await userService.deleteUser(user.id)
     res.redirect("/login")
   })
