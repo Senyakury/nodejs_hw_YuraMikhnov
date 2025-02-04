@@ -13,15 +13,18 @@ class PostService  {
     }
 
     
-  async getAllPosts(filters) {
+  async getAllPosts(filters?) {
     return await this.repository.find(filters)
   }
-  async getPostById(id:number) {
-    const post = await this.repository.findOne({ where: { id } })
+  async getPostBy(where:{}) {
+    if (!where) {
+      throw new Error("No data given");
+    }
+    const post = await this.repository.findOne({ where })
     return post
   }
   async getPostByUserId(id:number) {
-    const user = await userService.getUserById(id)
+    const user = await userService.getUserBy(id)
     if (!user) {
       throw new Error("User Not Found");
     }
@@ -40,7 +43,7 @@ class PostService  {
       post.updatedAt = new Date().toISOString()
       await this.repository.save(post);
 
-      const author = await userService.getUserById(authorId);
+      const author = await userService.getUserBy(authorId);
       if (!author) {
         throw new Error("Author Not Found!");
       }
@@ -50,14 +53,14 @@ class PostService  {
       }
         return post
     }
-     async updatePost(id:number, title:string, content:string , status:string  ) {
-        const post = await this.getPostById(id)
+     async updatePost(id:number, title?:string, content?:string) {
+        const post = await this.getPostBy({id})
         if (!post) {
           throw new Error("Post not Found")
         }
           post.title = title
           post.content = content
-          post.status = status
+          post.status = "updated"
         return await this.repository.save(post)
       }
       async deletePost(id:number){

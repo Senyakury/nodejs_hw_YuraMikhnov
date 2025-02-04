@@ -47,7 +47,7 @@ postRouter.get("/users/:id/posts", async (req, res) => {
   postRouter.get("/posts/:id", async (req, res) => {
     const { id } = req.params;
     try {
-      const user = await postService.getPostById(id);
+      const user = await postService.getPostBy({id});
       if (!user) {
         res.status(404).json({ error: "Post not found" });
         return;
@@ -71,7 +71,7 @@ postRouter.get("/users/:id/posts", async (req, res) => {
     const { id } = req.params;
     const { title , content , status} = req.body;
     try {
-      const user = await postService.updatePost(id , title , content , status );
+      const user = await postService.updatePost(id , title , content );
       res.json(user);
     } catch (err) {
       res.status(500).json({ error: err.message });

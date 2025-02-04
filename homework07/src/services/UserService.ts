@@ -8,30 +8,29 @@ class UserService {
   constructor(){
     this.repository = appDataSource.getRepository(User);
   }
-  async getAllUsers(filters) {
+  async getAllUsers(filters?) {
     return await this.repository.find(filters)
   }
 
   
 
-  async getUserById(id:number) {
-    if (!id) {
-      throw new Error("No Id given");
+  async getUserBy(where:{}) {
+    if (!where) {
+      throw new Error("No data given");
     }
-    const user = await this.repository.findOne({ where: { id } , relations : ["posts"]})
-    if (!user) {
-      throw new Error("User Not Found");
-    }
+    const user = await this.repository.findOne({ where , relations : ["posts"]})
     return user
   }
 
 
 
-  async createUser( name:string, email:string, age:number ) {
-    const user = new User
-      user.name = name
-      user.email = email
-      user.age = age
+  async createUser( name:string, email:string, passwordHash:string,age:number ) {
+    const user = this.repository.create({
+      name,
+      email,
+      password: passwordHash,
+      age,
+  });
     return await this.repository.save(user)
   }
 
@@ -39,13 +38,14 @@ class UserService {
 
  
 
-  async updateUser(id:number, name:string , email:string , age:number) {
-    const user = await this.getUserById(id)
+  async updateUser(id:number, name?:string , email?:string ,passwordHash?:string, age?:number) {
+    const user = await this.getUserBy({id})
     if (!user) {
       throw new Error("User Not Found");
     }
       user.name = name
       user.email = email
+      user.password = passwordHash
       user.age = age
     return await this.repository.save(user)
   }

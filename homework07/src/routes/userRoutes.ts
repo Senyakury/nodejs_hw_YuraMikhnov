@@ -1,3 +1,4 @@
+import bcrypt from 'bcryptjs';
 import { Router } from "express";
 import { userService } from "../services/UserService";
 import { body, validationResult } from "express-validator"
@@ -8,7 +9,6 @@ userRouter.post("/users",
   body("name").trim().isLength({min:2}),
   body("email").trim().isEmail(),
   body("age").trim().isNumeric().isLength({max:2}),
-  // body("age").trim(),
   async (req, res) => {
   const result = validationResult(req)
   if (!result.isEmpty()) {
@@ -16,10 +16,11 @@ userRouter.post("/users",
     return;
   }
   
-  const { name, email, age } = req.body;
+  const { name, email, password , age } = req.body;
+  const passwordHash = bcrypt.hash(password,10)
 
   try {
-    const user = await userService.createUser( name, email, age );
+    const user = await userService.createUser( name, email, passwordHash , age );
     res.status(201).json(user);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -38,7 +39,7 @@ userRouter.get("/users", async (req, res) => {
 userRouter.get("/users/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const user = await userService.getUserById(id);
+    const user = await userService.getUserBy({id});
     if (!user) {
       res.status(404).json({ error: "User not found" });
       return;
@@ -53,7 +54,6 @@ userRouter.put("/users/:id",
   body("name").trim().isLength({min:2}),
   body("email").trim().isEmail(),
   body("age").trim().isNumeric().isLength({max:2}),
-  // body("age").trim().
   async (req, res) =>{
   const result = validationResult(req)
   if (!result.isEmpty()) {

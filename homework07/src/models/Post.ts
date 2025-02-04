@@ -1,6 +1,7 @@
 import "reflect-metadata";
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne , JoinColumn} from "typeorm"
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne , JoinColumn , OneToMany} from "typeorm"
 import { User } from "./User"
+import { Comment } from "./Comment";
 
 
 @Entity("posts")
@@ -20,7 +21,10 @@ export class Post {
   @ManyToOne(() => User, (user) => user.posts,{ onDelete: "CASCADE" })
   author: User
 
-  @Column("integer",{ nullable: true })
+  @OneToMany(() => Comment, (comment) => comment.post , { onDelete: "CASCADE" , eager: true}) 
+  comments: Comment[]
+
+  @Column("integer")
   authorId: number
   
   @Column("date")
