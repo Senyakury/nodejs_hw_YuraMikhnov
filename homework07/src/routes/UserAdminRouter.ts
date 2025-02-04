@@ -10,6 +10,9 @@ import { body , validationResult } from 'express-validator';
 
 export const UserAdminRouter = Router()
 UserAdminRouter.get("/register",async (req:Request , res:Response)=>{
+  if(req.cookies['accessToken']){
+    res.clearCookie('accessToken');
+  }
     res.render("register")
 })
 
@@ -23,8 +26,6 @@ UserAdminRouter.post("/register",
       res.status(422).send({ errors: result.array() });
       return;
     }
-
-    res.clearCookie('accessToken');
     const {name , email , password, age} = req.body
     const userByName = await userService.getUserBy({name})
     const userByEmail = await userService.getUserBy({email})
@@ -46,7 +47,11 @@ UserAdminRouter.post("/register",
 
 
 UserAdminRouter.get("/login",(req:Request,res:Response)=>{
+  if(req.cookies['accessToken']){
+    res.clearCookie('accessToken');
+  }
     res.render("login");
+
 })
 
 UserAdminRouter.post("/login", async (req:Request,res:Response)=>{
