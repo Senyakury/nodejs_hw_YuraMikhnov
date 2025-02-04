@@ -26,11 +26,6 @@ UserAdminRouter.post("/register",
 
     res.clearCookie('accessToken');
     const {name , email , password, age} = req.body
-
-    if (!email.includes("@gmail.com")) {
-      res.status(400).send("Its not an email")
-      return
-    }
     const userByName = await userService.getUserBy({name})
     const userByEmail = await userService.getUserBy({email})
     if(userByName || userByEmail){
