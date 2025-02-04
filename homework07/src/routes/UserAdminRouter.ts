@@ -120,7 +120,7 @@ UserAdminRouter.get('/main', authenticateToken, async (req:Request, res:Response
         id:user.id
     })
   })
-  UserAdminRouter.post("/main/profile/updateuser/:id",
+  UserAdminRouter.post("/main/profile/updateuser/:id",authenticateToken,
     body("email").isEmail(),
     body("name").isLength({min:2}),
     body("age").isLength({max:2})

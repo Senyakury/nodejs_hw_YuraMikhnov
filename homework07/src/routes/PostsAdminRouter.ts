@@ -1,3 +1,4 @@
+import { userService } from './../services/UserService';
 import { Router , Request , Response } from 'express';
 import { postService } from '../services/PostService';
 import { body, validationResult } from 'express-validator';
@@ -5,7 +6,7 @@ import { authenticateToken } from '../middleware/authentificator';
 
 
 export const PostsAdminRouter = Router()
-PostsAdminRouter.get("/main/postcreate", async (req:Request , res:Response)=>{
+PostsAdminRouter.get("/main/postcreate",authenticateToken, async (req:Request , res:Response)=>{
     res.render("postcreate")
 })
 PostsAdminRouter.post("/main/postcreate",authenticateToken,
@@ -36,11 +37,11 @@ PostsAdminRouter.post("/main/postcreate",authenticateToken,
         res.status(500).send('Internal Server Error');
     }
 })
-PostsAdminRouter.get('/main/postchange/:id', async (req:Request, res:Response) => {
+PostsAdminRouter.get('/main/postchange/:id',authenticateToken, async (req:Request, res:Response) => {
     const postId = req.params.id;
     res.render("postchange", { id: postId });
 });
-PostsAdminRouter.post("/main/postchange/:id",
+PostsAdminRouter.post("/main/postchange/:id",authenticateToken,
     body("title").isLength({min:2 , max:20}),
     body("content").isLength({min:5 , max:100})
     , async (req: Request, res: Response) => {
@@ -52,19 +53,31 @@ PostsAdminRouter.post("/main/postchange/:id",
 
     const id = req.params.id;
     const { title, content } = req.body;
+    const user = req.user
     const post = await postService.getPostBy({ id:id });
+    if (user.id !== post.authorId) {
+        return res.status(403).send("You're not an author")
+    }
     if (!post) {
         return res.status(400).send("Post not found");
     }
     await postService.updatePost(id, title, content);
     res.redirect('/main');
 });
-PostsAdminRouter.get('/main/postdelete/:id', async (req:Request, res:Response) => {
+PostsAdminRouter.get('/main/postdelete/:id',authenticateToken, async (req:Request, res:Response) => {
     const postId = req.params.id;
     res.render("postdelete", {id:postId})
 });
-PostsAdminRouter.post("/main/postdelete/:id", async (req:Request , res:Response)=>{
+PostsAdminRouter.post("/main/postdelete/:id",authenticateToken, async (req:Request , res:Response)=>{
     const id = req.params.id;
+    const user = req.user
+    const post = await postService.getPostBy({ id:id });
+    if (user.id !== post.authorId) {
+        return res.status(403).send("You're not an author")
+    }
+    if (!post) {
+        return res.status(400).send("Post not found");
+    }
     await postService.deletePost(id)
     res.redirect("/main")
 })

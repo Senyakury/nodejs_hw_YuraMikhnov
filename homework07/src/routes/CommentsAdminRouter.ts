@@ -45,33 +45,42 @@ CommentsAdminRoutes.post("/main/post/:postId/comments",authenticateToken
     await commentService.createComment(content,authorId,postId)
     res.redirect(`/main/post/${postId}/comments`)
 })
-CommentsAdminRoutes.get("/main/post/:postId/comments/:commentId/delete",  async (req:Request, res:Response)=>{
+CommentsAdminRoutes.get("/main/post/:postId/comments/:commentId/delete", authenticateToken , async (req:Request, res:Response)=>{
     const { postId, commentId } = req.params;
     res.render("deletecomment",{
         postId:postId,
         commentId:commentId
     })
   })
-CommentsAdminRoutes.post("/main/post/:postId/comments/:commentId/delete",  async (req:Request, res:Response)=>{
+CommentsAdminRoutes.post("/main/post/:postId/comments/:commentId/delete", authenticateToken , async (req:Request, res:Response)=>{
     const postId = req.params.postId
     const commentId = req.params.commentId
+    const comment = await commentService.getCommentBy({id:commentId})
+    const user = req.user
+    if (user.id !== comment.authorId) {
+        return res.status(403).send("You are not an author")
+    }
     await commentService.deleteComment(commentId)
     res.redirect(`/main/post/${postId}/comments`)
   })
 
 
-  CommentsAdminRoutes.get("/main/post/:postId/comments/:commentId/change",  async (req:Request, res:Response)=>{
+  CommentsAdminRoutes.get("/main/post/:postId/comments/:commentId/change", authenticateToken ,  async (req:Request, res:Response)=>{
     const { postId, commentId } = req.params;
     res.render("updatecomment",{
         postId:postId,
         commentId:commentId
     })
   })
-CommentsAdminRoutes.post("/main/post/:postId/comments/:commentId/change",  async (req:Request, res:Response)=>{
+CommentsAdminRoutes.post("/main/post/:postId/comments/:commentId/change", authenticateToken ,  async (req:Request, res:Response)=>{
     const postId = req.params.postId
     const commentId = req.params.commentId
     const {content} = req.body
     const comment = await commentService.getCommentBy({id:commentId})
+    const user = req.user
+    if (user.id !== comment.authorId) {
+        res.status(403).send("You are not an author")
+    }
     const CheckedContent = content || comment.content
     await commentService.updateComment(commentId,CheckedContent)
     res.redirect(`/main/post/${postId}/comments`)
